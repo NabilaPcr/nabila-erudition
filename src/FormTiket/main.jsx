@@ -7,8 +7,8 @@ import TicketOrder from "./TicketOrder";
 createRoot(document.getElementById("root")).render(
     <div>
          <FormMark />
-         <UserForm/>
-         <TicketOrder/>
+          <TicketOrder/>
+          <UserForm/>
 
     </div>
 

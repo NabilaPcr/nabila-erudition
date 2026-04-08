@@ -2,8 +2,7 @@ import { useState } from "react";
 
 export default function TicketOrder(){
   const [jumlah, setJumlah] = useState("");
-  const hargaTiket = 750000;
-  const total = jumlah * hargaTiket;
+  const total = jumlah * 750000;
 
   return (
     <div className="flex flex-col items-center p-2">
@@ -12,7 +11,7 @@ export default function TicketOrder(){
           🛒 Pembelian Tiket
         </h2>
 
-        <div className="mb-4">
+        <div className="m4">
           <label className="block text-[#1a3c34] font-bold text-xs uppercase mb-1">
             Jumlah Tiket
           </label>

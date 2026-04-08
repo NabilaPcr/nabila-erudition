@@ -1,12 +1,21 @@
+import TicketOrder from "./TicketOrder"; // Asumsi nama file
+import UserForm from "./UserForm";     // Asumsi nama file
+
 export default function FormMark() {
+  const handleScroll = () => {
+    const element = document.getElementById("pembelian-section");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <div className="bg-[#f0f9db] min-h-screen pb-10 font-sans text-[#1a3c34]">
+    <div className="bg-[#f0f9db]  pb-10 font-sans text-[#1a3c34]">
       <NavbarConcert />
 
       <div className="flex flex-col items-center mt-4 gap-2 px-4">
         <HeaderConcert />
 
-        {/* Section Info - Dibuat menyamping jika di desktop, tumpuk di HP */}
         <div className="w-full max-w-lg grid grid-cols-1 gap-3 mt-2">
           <TicketCard />
           <div className="grid grid-cols-2 gap-2">
@@ -15,19 +24,12 @@ export default function FormMark() {
           </div>
         </div>
 
-        <div className="my-2">
-          <TicketButton />
-        </div>
-
-        {/* Form Section - Tanpa margin berlebih agar rapat */}
-        <div className="w-full max-w-lg space-y-2">
-          <TicketOrder />
-          <UserForm />
-        </div>
       </div>
     </div>
   );
 }
+
+// --- SUB-KOMPONEN INTERNAL ---
 
 function HeaderConcert() {
   return (
@@ -67,9 +69,12 @@ function TicketCard() {
   );
 }
 
-function TicketButton() {
+function TicketButton({ onClick }) {
   return (
-    <button className="bg-[#a4e318] text-[#1a3c34] border-2 border-[#1a3c34] px-8 py-2 rounded-full font-black text-sm hover:bg-[#38b6ff] transition-all shadow-lg uppercase">
+    <button 
+      onClick={onClick}
+      className="bg-[#a4e318] text-[#1a3c34] border-2 border-[#1a3c34] px-8 py-2 rounded-full font-black text-sm hover:bg-[#38b6ff] transition-all shadow-lg uppercase"
+    >
       Pesan Sekarang
     </button>
   );
@@ -89,70 +94,6 @@ function TicketHighlight() {
     <div className="bg-[#8cc63f] text-[#1a3c34] p-3 rounded-xl border-2 border-[#1a3c34] shadow-[3px_3px_0px_0px_#1a3c34]">
       <h3 className="text-[10px] font-black uppercase italic leading-none">Special</h3>
       <p className="text-[9px] font-bold">Juice Box Edition.</p>
-    </div>
-  );
-}
-
-// --- SUB-KOMPONEN TICKET ORDER (Disatukan agar tidak error) ---
-import { useState } from "react";
-
-function TicketOrder() {
-  const [jumlah, setJumlah] = useState("");
-  const total = jumlah * 750000;
-
-  return (
-    <div className="bg-white border-2 border-[#1a3c34] p-4 rounded-2xl shadow-md w-full">
-      <h2 className="text-sm font-black text-[#1a3c34] uppercase mb-3 italic">🛒 Pembelian</h2>
-      <div className="flex items-center gap-3">
-        <div className="flex-1">
-          <label className="text-[10px] font-black uppercase block mb-1">Jumlah</label>
-          <input
-            type="number"
-            className="w-full p-2 bg-[#f0f9db] border-2 border-[#1a3c34] rounded-lg text-sm font-bold focus:outline-none"
-            placeholder="0"
-            onChange={(e) => setJumlah(e.target.value)}
-          />
-        </div>
-        <div className="flex-1">
-          <label className="text-[10px] font-black uppercase block mb-1">Total</label>
-          <div className="p-2 bg-[#a4e318] border-2 border-[#1a3c34] rounded-lg text-[11px] font-black">
-            Rp {total.toLocaleString()}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- SUB-KOMPONEN USER FORM (Disatukan agar tidak error) ---
-function UserForm() {
-  const [nama, setNama] = useState("");
-  const [email, setEmail] = useState("");
-  const valid = nama && email;
-
-  return (
-    <div className="bg-white border-2 border-[#1a3c34] p-4 rounded-2xl shadow-md w-full">
-      <h2 className="text-sm font-black text-[#1a3c34] uppercase mb-3 italic">👤 Data Pembeli</h2>
-      <div className="space-y-2">
-        <input
-          className="w-full p-2 text-xs border-b-2 border-[#1a3c34] focus:outline-none bg-[#f0f9db] rounded"
-          placeholder="Nama Lengkap..."
-          onChange={(e) => setNama(e.target.value)}
-        />
-        <input
-          className="w-full p-2 text-xs border-b-2 border-[#1a3c34] focus:outline-none bg-[#f0f9db] rounded"
-          placeholder="Email..."
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <button 
-        disabled={!valid}
-        className={`w-full mt-3 p-2 rounded-xl font-black text-xs uppercase border-2 border-[#1a3c34] transition-all ${
-          valid ? 'bg-[#38b6ff] text-white shadow-[3px_3px_0px_0px_#1a3c34]' : 'bg-gray-200 text-gray-400 border-gray-300'
-        }`}
-      >
-        Simpan Data
-      </button>
     </div>
   );
 }
