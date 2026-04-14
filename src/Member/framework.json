@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "name": "Taeyong",
+    "sub_unit": "NCT 127",
+    "position": "Leader, Main Rapper",
+    "image": "https://www.smtown.com/upload/artist/artist_nct_taeyong.jpg",
+    "profile": { "birth_date": "1995-07-01", "blood_type": "O", "mbti": "ENTP" },
+    "social_media": { "instagram": "@taeoxo_nct", "tiktok": "@taeyong_lee" },
+    "stats": { "dance": 99, "rap": 99, "visual": 100 }
+  },
+  {
+    "id": 2,
+    "name": "Taeil",
+    "sub_unit": "NCT 127",
+    "position": "Main Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Taeil",
+    "profile": { "birth_date": "1994-06-14", "blood_type": "O", "mbti": "ISFP" },
+    "social_media": { "instagram": "@mo.on_air", "tiktok": "n/a" },
+    "stats": { "dance": 75, "rap": 50, "visual": 85 }
+  },
+  {
+    "id": 3,
+    "name": "Johnny",
+    "sub_unit": "NCT 127",
+    "position": "Lead Rapper",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Johnny",
+    "profile": { "birth_date": "1995-02-09", "blood_type": "B", "mbti": "ENTP" },
+    "social_media": { "instagram": "@johnnyjsuh", "tiktok": "@johnnyjsuh" },
+    "stats": { "dance": 86, "rap": 82, "visual": 93 }
+  },
+  {
+    "id": 4,
+    "name": "Yuta",
+    "sub_unit": "NCT 127",
+    "position": "Lead Dancer",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Yuta",
+    "profile": { "birth_date": "1995-10-26", "blood_type": "A", "mbti": "OSI" },
+    "social_media": { "instagram": "@yuu_taa_1026", "tiktok": "n/a" },
+    "stats": { "dance": 93, "rap": 75, "visual": 94 }
+  },
+  {
+    "id": 5,
+    "name": "Kun",
+    "sub_unit": "WayV",
+    "position": "Leader (WayV)",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Kun",
+    "profile": { "birth_date": "1996-01-01", "blood_type": "B", "mbti": "ESFJ" },
+    "social_media": { "instagram": "@kun11xd", "tiktok": "n/a" },
+    "stats": { "dance": 80, "rap": 65, "visual": 88 }
+  },
+  {
+    "id": 6,
+    "name": "Doyoung",
+    "sub_unit": "NCT 127",
+    "position": "Main Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Doyoung",
+    "profile": { "birth_date": "1996-02-01", "blood_type": "B", "mbti": "ISFJ" },
+    "social_media": { "instagram": "@do0_nct", "tiktok": "n/a" },
+    "stats": { "dance": 80, "rap": 50, "visual": 92 }
+  },
+  {
+    "id": 7,
+    "name": "Ten",
+    "sub_unit": "WayV",
+    "position": "Main Dancer",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Ten",
+    "profile": { "birth_date": "1996-02-27", "blood_type": "A", "mbti": "INFJ" },
+    "social_media": { "instagram": "@tenlee_1001", "tiktok": "@tenlee" },
+    "stats": { "dance": 100, "rap": 85, "visual": 95 }
+  },
+  {
+    "id": 8,
+    "name": "Jaehyun",
+    "sub_unit": "NCT 127",
+    "position": "Main Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jaehyun",
+    "profile": { "birth_date": "1997-02-14", "blood_type": "A", "mbti": "ESTP" },
+    "social_media": { "instagram": "@_jeongjaehyun", "tiktok": "@jaehyun_nct" },
+    "stats": { "dance": 85, "rap": 70, "visual": 100 }
+  },
+  {
+    "id": 9,
+    "name": "Winwin",
+    "sub_unit": "WayV",
+    "position": "Lead Dancer",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Winwin",
+    "profile": { "birth_date": "1997-10-28", "blood_type": "B", "mbti": "INFJ" },
+    "social_media": { "instagram": "@wwiinn_7", "tiktok": "n/a" },
+    "stats": { "dance": 92, "rap": 60, "visual": 97 }
+  },
+  {
+    "id": 10,
+    "name": "Jungwoo",
+    "sub_unit": "NCT 127",
+    "position": "Lead Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jungwoo",
+    "profile": { "birth_date": "1998-02-19", "blood_type": "AB", "mbti": "INFJ" },
+    "social_media": { "instagram": "@sugaringcandy", "tiktok": "n/a" },
+    "stats": { "dance": 88, "rap": 50, "visual": 96 }
+  },
+  {
+    "id": 11,
+    "name": "Mark",
+    "sub_unit": "NCT Dream",
+    "position": "Main Rapper",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Mark",
+    "profile": { "birth_date": "1999-08-02", "blood_type": "A", "mbti": "INFJ" },
+    "social_media": { "instagram": "@onyourm__ark", "tiktok": "@marklee" },
+    "stats": { "dance": 95, "rap": 100, "visual": 90 }
+  },
+  {
+    "id": 12,
+    "name": "Hendery",
+    "sub_unit": "WayV",
+    "position": "Lead Rapper",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Hendery",
+    "profile": { "birth_date": "1999-09-28", "blood_type": "O", "mbti": "ENTP" },
+    "social_media": { "instagram": "@i_m_hendery", "tiktok": "n/a" },
+    "stats": { "dance": 85, "rap": 88, "visual": 92 }
+  },
+  {
+    "id": 13,
+    "name": "Xiaojun",
+    "sub_unit": "WayV",
+    "position": "Main Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Xiaojun",
+    "profile": { "birth_date": "1999-08-08", "blood_type": "A", "mbti": "ENFP" },
+    "social_media": { "instagram": "@djxiao_888", "tiktok": "n/a" },
+    "stats": { "dance": 82, "rap": 65, "visual": 90 }
+  },
+  {
+    "id": 14,
+    "name": "Renjun",
+    "sub_unit": "NCT Dream",
+    "position": "Main Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Renjun",
+    "profile": { "birth_date": "2000-03-23", "blood_type": "O", "mbti": "INTP" },
+    "social_media": { "instagram": "@yellow_3to3", "tiktok": "n/a" },
+    "stats": { "dance": 85, "rap": 60, "visual": 90 }
+  },
+  {
+    "id": 15,
+    "name": "Jeno",
+    "sub_unit": "NCT Dream",
+    "position": "Lead Dancer",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jeno",
+    "profile": { "birth_date": "2000-04-23", "blood_type": "A", "mbti": "ISFP" },
+    "social_media": { "instagram": "@leejen_o_423", "tiktok": "n/a" },
+    "stats": { "dance": 94, "rap": 88, "visual": 96 }
+  },
+  {
+    "id": 16,
+    "name": "Haechan",
+    "sub_unit": "NCT 127",
+    "position": "Main Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Haechan",
+    "profile": { "birth_date": "2000-06-06", "blood_type": "AB", "mbti": "ENFP" },
+    "social_media": { "instagram": "@haechanahceah", "tiktok": "n/a" },
+    "stats": { "dance": 90, "rap": 70, "visual": 88 }
+  },
+  {
+    "id": 17,
+    "name": "Jaemin",
+    "sub_unit": "NCT Dream",
+    "position": "Lead Rapper",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jaemin",
+    "profile": { "birth_date": "2000-08-13", "blood_type": "AB", "mbti": "ISFJ" },
+    "social_media": { "instagram": "@na.jaemin0813", "tiktok": "n/a" },
+    "stats": { "dance": 88, "rap": 85, "visual": 98 }
+  },
+  {
+    "id": 18,
+    "name": "Yangyang",
+    "sub_unit": "WayV",
+    "position": "Main Rapper",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Yangyang",
+    "profile": { "birth_date": "2000-10-10", "blood_type": "O", "mbti": "INTJ" },
+    "social_media": { "instagram": "@yangyang_x2", "tiktok": "n/a" },
+    "stats": { "dance": 88, "rap": 95, "visual": 87 }
+  },
+  {
+    "id": 19,
+    "name": "Chenle",
+    "sub_unit": "NCT Dream",
+    "position": "Main Vocalist",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Chenle",
+    "profile": { "birth_date": "2001-11-22", "blood_type": "A", "mbti": "ENFP" },
+    "social_media": { "instagram": "@kh1000le", "tiktok": "n/a" },
+    "stats": { "dance": 80, "rap": 60, "visual": 85 }
+  },
+  {
+    "id": 20,
+    "name": "Jisung",
+    "sub_unit": "NCT Dream",
+    "position": "Main Dancer",
+    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jisung",
+    "profile": { "birth_date": "2002-02-05", "blood_type": "O", "mbti": "INFP" },
+    "social_media": { "instagram": "@the_and_jisung", "tiktok": "n/a" },
+    "stats": { "dance": 97, "rap": 80, "visual": 85 }
+  }
+]
