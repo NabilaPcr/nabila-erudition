@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function AdminTable({ members }) {
   return (
-    <div className="bg-white rounded-[2rem] shadow-sm border border-[#f8ecec] overflow-hidden">
+    <div className="bg-white rounded-2rem shadow-sm border border-[#f8ecec] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-[#fbe4d8]/50 text-[#a6808c]">

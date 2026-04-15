@@ -60,7 +60,6 @@ export default function NctManager() {
   );
 }
 
-// SUB-FUNCTION 1: HEADER
 function NctHeader({ view, setView, total }) {
   return (
     <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
