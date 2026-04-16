@@ -32,13 +32,13 @@ export default function Header() {
             onClick={() => setIsProfileOpen(!isProfileOpen)}
           >
             <span className="hidden md:block">Hello, <b>Nabila Azzahra</b></span>
-            <img src="img/Pearl.jpg" className="w-10 h-10 rounded-full border-2 border-hijau hover:opacity-80 transition" alt="Profile" />
+            <img src="img/crochet.jpg" className="w-10 h-10 rounded-full border-2 border-hijau hover:opacity-80 transition" alt="Profile" />
           </div>
 
           {isProfileOpen && (
             <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-garis z-50 p-4 animate-in fade-in zoom-in duration-200">
               <div className="flex flex-col items-center">
-                <img src="img/Pearl.jpg" className="w-16 h-16 rounded-full mb-3" alt="Big Profile" />
+                <img src="img/crochet.jpg" className="w-16 h-16 rounded-full mb-3" alt="Big Profile" />
                 <h4 className="font-bold text-teks">Nabila Azzahra</h4>
                 <p className="text-sm text-teks-samping mb-4 text-center">2 SI C - Politeknik Caltex Riau</p>
                 <div className="w-full border-t border-garis pt-3">
