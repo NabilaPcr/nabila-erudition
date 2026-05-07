@@ -1,13 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-apotek-merah: #ef4444;
-  --color-apotek-hijau: #10b981;
-  --color-apotek-latar: #f9fafb;
-  --font-poppins: "Poppins", sans-serif;
-  --font-barlow: "Barlow", sans-serif;
+  --color-apotek-hijau: #C0E1D2;
+  --color-apotek-merah: #DC9B9B;
+  --color-apotek-kuning: #F2D2BD;
+  --color-apotek-biru: #B0E0E6;
+  --color-apotek-latar: #F9F8F3; 
+  --font-Mulish: "Mulish", Mulish;
 }
 
+/* Pastikan ini ada agar class standar tidak dianggap unknown */
+ @reference "tailwindcss";  
+
 body {
-  @apply font-barlow bg-apotek-latar text-gray-800;
+  @apply font-Mulish bg-apotek-latar text-slate-700 antialiased;
+}
+
+@utility card-modern {
+  @apply bg-white rounded-[24px] p-6 shadow-sm border border-gray-100 transition-all hover:shadow-md;
+}
+
+@utility flex-center {
+  @apply flex items-center justify-center;
 }
