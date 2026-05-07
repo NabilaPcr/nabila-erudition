@@ -4,7 +4,7 @@ import "./assets/tailwind.css";
 import Sidebar from "./layouts/Sidebar";
 import Header from "./layouts/Header";
 import Dashboard from "./pages/Dashboard";
-import Orders from "./pages/Orders";g
+import Orders from "./pages/Orders";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("dashboard");

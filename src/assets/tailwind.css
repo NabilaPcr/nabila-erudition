@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-apotek-merah: #ef4444;
+  --color-apotek-hijau: #10b981;
+  --color-apotek-latar: #f9fafb;
+  --font-poppins: "Poppins", sans-serif;
+  --font-barlow: "Barlow", sans-serif;
+}
+
+body {
+  @apply font-barlow bg-apotek-latar text-gray-800;
+}
