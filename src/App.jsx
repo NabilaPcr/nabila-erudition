@@ -1,20 +1,25 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Loading from "./components/Loading";
+import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+import AuthLayout from "./layouts/AuthLayout";
+import Login from "./Pages/auth/Login";
+
 
 const MainLayout = lazy(() => import('./layouts/MainLayout'));
-const AuthLayout = lazy(() => import('./layouts/AuthLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Login = lazy(() => import('./pages/auth/login')); 
 const CekStok = lazy(() => import('./pages/CekStok'));
 const Chatbox = lazy(() => import('./pages/Chatbox'));
 const Register = lazy(() => import('./pages/auth/Register'));
+
 
 export default function App() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   return (
     <Router>
-      <Suspense fallback={<Login />}>
+      <Suspense fallback={<Loading />}>
         <Routes>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
