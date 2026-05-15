@@ -10,7 +10,6 @@ const Chatbox = lazy(() => import('./pages/Chatbox'));
 const Register = lazy(() => import('./pages/auth/Register'));
 
 export default function App() {
-  // Logika login sederhana seperti di referensi
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   return (

@@ -10,7 +10,7 @@
 }
 
 /* Pastikan ini ada agar class standar tidak dianggap unknown */
- @reference "tailwindcss";  
+ /* @reference "tailwindcss";   */
 
 body {
   @apply font-Mulish bg-apotek-latar text-slate-700 antialiased;

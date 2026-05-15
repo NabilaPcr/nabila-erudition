@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import AdminTable from './adminTable';
+import AdminTable from './Member/adminTable';
 
 const nctData = [
   { id: 1, name: "Taeyong", sub_unit: "NCT 127", position: "Leader", image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taeyong", profile: { birth_date: "1995-07-01", blood_type: "O", mbti: "ENTP" }, social_media: { instagram: "@taeoxo_nct", tiktok: "@taeyong_lee" }, stats: { dance: 99, rap: 99, visual: 100 } },
