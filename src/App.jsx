@@ -4,7 +4,7 @@ import Loading from "./components/Loading";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import AuthLayout from "./layouts/AuthLayout";
-import Login from "./Pages/auth/Login";
+import Login from "./pages/auth/Login";
 
 
 const MainLayout = lazy(() => import('./layouts/MainLayout'));
