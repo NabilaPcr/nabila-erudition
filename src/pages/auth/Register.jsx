@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import InputField from '../../components/InputField';
+import Button from '../../components/Button';
+import Alert from '../../components/Alert';
 
 export default function Register() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({ fullname: '', email: '', password: '' });
+  const [success, setSuccess] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleRegister = (e) => {
     e.preventDefault();
-    alert("Akun berhasil dibuat!");
-    navigate('/login');
+    if (!formData.fullname || !formData.email || !formData.password) {
+      alert("Semua field harus diisi!");
+      return;
+    }
+    setSuccess("Akun berhasil dibuat!");
+    setTimeout(() => {
+      navigate('/login');
+    }, 1500);
   };
 
   return (
@@ -16,46 +31,42 @@ export default function Register() {
         <h3 className="text-xl font-bold text-slate-700">Buat Akun Baru</h3>
         <p className="text-sm text-slate-400 mt-1 font-medium">Daftar sebagai staf Apotek Keluarga 25</p>
       </div>
-      
+
+      {success && <Alert type="success" message={success} />}
+
       <form className="space-y-4 w-full" onSubmit={handleRegister}>
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-slate-400 ml-4 uppercase tracking-wider">Full Name</label>
-          <input 
-            type="text" 
-            placeholder="Staf Admin" 
-            className="w-full px-6 py-4 bg-slate-50 rounded-[20px] border-2 border-transparent outline-none focus:border-apotek-hijau/20 focus:bg-white transition-all text-sm font-medium" 
-            required
-          />
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-slate-400 ml-4 uppercase tracking-wider">Email Address</label>
-          <input 
-            type="email" 
-            placeholder="email@example.com" 
-            className="w-full px-6 py-4 bg-slate-50 rounded-[20px] border-2 border-transparent outline-none focus:border-apotek-hijau/20 focus:bg-white transition-all text-sm font-medium" 
-            required
-          />
-        </div>
-        
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-slate-400 ml-4 uppercase tracking-wider">Password</label>
-          <input 
-            type="password" 
-            placeholder="Minimal 8 karakter" 
-            className="w-full px-6 py-4 bg-slate-50 rounded-[20px] border-2 border-transparent outline-none focus:border-apotek-hijau/20 focus:bg-white transition-all text-sm font-medium" 
-            required
-          />
-        </div>
-
-        <button 
-          type="submit"
-          className="w-full bg-apotek-hijau text-slate-700 py-4 mt-4 rounded-[20px] font-black shadow-lg shadow-apotek-hijau/30 hover:bg-opacity-80 hover:-translate-y-1 transition-all active:scale-95 uppercase tracking-widest text-xs"
-        >
+        <InputField
+          label="Full Name"
+          type="text"
+          name="fullname"
+          value={formData.fullname}
+          onChange={handleChange}
+          placeholder="Nama Lengkap"
+          required
+        />
+        <InputField
+          label="Email Address"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="nama@apotek.com"
+          required
+        />
+        <InputField
+          label="Password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="••••••••••••••••••••"
+          required
+        />
+        <Button type="success" onClick={handleRegister}>
           Daftar Akun
-        </button>
+        </Button>
       </form>
-      
+
       <p className="mt-10 text-center text-[13px] text-slate-400 font-medium">
         Sudah punya akun? <Link to="/login" className="text-apotek-hijau font-black hover:underline ml-1">Masuk Saja</Link>
       </p>

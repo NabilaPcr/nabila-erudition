@@ -1,13 +1,18 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
+import Card from '../components/Card';
+import Loading from '../components/Loading';
+import Footer from '../components/Footer';
 
 export default function Dashboard() {
   const stats = [
     { label: 'TOTAL SALES', value: 'Rp 30M', trend: '+2.25%', color: 'text-green-500', icon: 'https://cdn-icons-png.flaticon.com/512/2854/2854660.png' },
-    { label: 'TOTAL CUSTOMERS', value: '1,000', trend: '', color: '', icon: 'https://cdn-icons-png.flaticon.com/512/681/681494.png' },
+    { label: 'TOTAL CUSTOMERS', value: '1,000', trend: '+5%', color: 'text-green-500', icon: 'https://cdn-icons-png.flaticon.com/512/681/681494.png' },
     { label: 'CLOSED DEALS', value: '150', trend: '-5.56%', color: 'text-red-400', icon: 'https://cdn-icons-png.flaticon.com/512/1067/1067561.png' },
     { label: 'CONVERSION RATE', value: '15%', trend: '+3.00%', color: 'text-green-500', icon: 'https://cdn-icons-png.flaticon.com/512/9322/9322045.png' },
   ];
+
+  if (!stats) return <Loading />;
 
   return (
     <div className="space-y-6">
@@ -16,22 +21,26 @@ export default function Dashboard() {
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
-          <div key={i} className="card-modern !p-5 flex items-center gap-4">
-            <div className="w-12 h-12 bg-slate-50 rounded-xl flex-center">
+          <Card key={i} className="!p-5 flex items-center gap-4">
+            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center">
               <img src={stat.icon} className="w-6 h-6 opacity-40" alt="" />
             </div>
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</p>
               <div className="flex items-center gap-2">
                 <span className="text-lg font-black text-slate-800">{stat.value}</span>
-                {stat.trend && <span className={`text-[10px] font-bold ${stat.trend.includes('+') ? 'text-green-500' : 'text-red-400'}`}>{stat.trend}</span>}
+                {stat.trend && (
+                  <span className={`text-[10px] font-bold ${stat.trend.includes('+') ? 'text-green-500' : 'text-red-400'}`}>
+                    {stat.trend}
+                  </span>
+                )}
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      {/* Middle Section: Graph & Segmentation */}
+      {/* Middle Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card-modern">
           <div className="flex justify-between items-center mb-8">
@@ -43,11 +52,15 @@ export default function Dashboard() {
           <div className="h-64 flex items-end justify-between gap-2 px-2">
             {[30, 45, 35, 25, 40, 50, 70, 95, 60, 45, 35, 40, 30].map((h, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                <div 
-                  style={{ height: `${h}%` }} 
-                  className={`w-full max-w-[12px] rounded-full transition-all duration-500 ${h > 80 ? 'bg-apotek-hijau' : 'bg-slate-100'}`}
+                <div
+                  style={{ height: `${h}%` }}
+                  className={`w-full max-w-[12px] rounded-full transition-all duration-500 ${
+                    h > 80 ? 'bg-apotek-hijau' : 'bg-slate-100'
+                  }`}
                 ></div>
-                <span className="text-[10px] text-slate-300 font-bold uppercase">{['Sat','Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon','Tue','Wed','Thu'][i]}</span>
+                <span className="text-[10px] text-slate-300 font-bold uppercase">
+                  {['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu'][i]}
+                </span>
               </div>
             ))}
           </div>
@@ -55,12 +68,11 @@ export default function Dashboard() {
 
         <div className="card-modern">
           <h3 className="font-bold text-slate-800 mb-6">Customer Segmentation</h3>
-          <div className="relative flex-center py-4">
-             {/* Simulasi Pie Chart dengan CSS */}
-             <div className="w-40 h-40 rounded-full border-[12px] border-slate-50 flex-center relative">
-                <div className="absolute inset-0 rounded-full border-[12px] border-indigo-500 border-t-transparent border-r-transparent -rotate-45"></div>
-                <span className="text-2xl font-black text-slate-800">60%</span>
-             </div>
+          <div className="relative flex items-center justify-center py-4">
+            <div className="w-40 h-40 rounded-full border-[12px] border-slate-50 flex items-center justify-center relative">
+              <div className="absolute inset-0 rounded-full border-[12px] border-indigo-500 border-t-transparent border-r-transparent -rotate-45"></div>
+              <span className="text-2xl font-black text-slate-800">60%</span>
+            </div>
           </div>
           <div className="mt-6 space-y-3">
             <LegendItem color="bg-indigo-500" label="Closed" value="60%" />
@@ -101,6 +113,7 @@ export default function Dashboard() {
       </div>
     </div>
   );
+  <Footer/>
 }
 
 function LegendItem({ color, label, value }) {

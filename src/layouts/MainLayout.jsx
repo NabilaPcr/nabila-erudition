@@ -2,9 +2,12 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+
 
 export default function MainLayout() {
   return (
+    <>
     <div className="flex min-h-screen bg-brand-red overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col pt-4 overflow-hidden">
@@ -14,8 +17,11 @@ export default function MainLayout() {
           <main className="p-8">
             <Outlet />
           </main>
+          
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }

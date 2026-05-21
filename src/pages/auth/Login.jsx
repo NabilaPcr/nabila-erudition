@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import InputField from '../../components/InputField';
+import Button from '../../components/Button';
+import Alert from '../../components/Alert';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
+  };
 
   const handleLogin = (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
+    if (!formData.email || !formData.password) {
+      setError('Email dan password harus diisi!');
+      return;
+    }
     navigate('/dashboard');
   };
 
@@ -15,40 +29,38 @@ export default function Login() {
         <h3 className="text-xl font-bold text-slate-700">Selamat Datang</h3>
         <p className="text-sm text-slate-400 mt-1 font-medium">Silahkan masuk ke dashboard admin</p>
       </div>
-      
+
+      {error && <Alert type="error" message={error} onClose={() => setError('')} />}
+
       <form className="space-y-4 w-full" onSubmit={handleLogin}>
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-slate-400 ml-4 uppercase tracking-wider">Email Address</label>
-          <input 
-            type="email" 
-            placeholder="nama@apotek.com" 
-            className="w-full px-6 py-4 bg-slate-50 rounded-[20px] border-2 border-transparent outline-none focus:border-apotek-merah/20 focus:bg-white transition-all text-sm font-medium" 
-            required
-          />
-        </div>
-        
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-slate-400 ml-4 uppercase tracking-wider">Password</label>
-          <input 
-            type="password" 
-            placeholder="••••••••" 
-            className="w-full px-6 py-4 bg-slate-50 rounded-[20px] border-2 border-transparent outline-none focus:border-apotek-merah/20 focus:bg-white transition-all text-sm font-medium" 
-            required
-          />
-        </div>
-
+        <InputField
+          label="Email Address"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="nama@apotek.com"
+          required
+        />
+        <InputField
+          label="Password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="••••••••••••••••••••••••••••••"
+          required
+        />
         <div className="flex justify-end pt-1">
-          <button type="button" className="text-xs font-bold text-slate-400 hover:text-apotek-merah transition-colors">Lupa Password?</button>
+          <button type="button" className="text-xs font-bold text-slate-400 hover:text-apotek-merah transition-colors">
+            Lupa Password?
+          </button>
         </div>
-
-        <button 
-          type="submit"
-          className="w-full bg-apotek-merah text-white py-4 mt-4 rounded-[20px] font-black shadow-lg shadow-apotek-merah/30 hover:bg-red-400 hover:-translate-y-1 transition-all active:scale-95 uppercase tracking-widest text-xs"
-        >
-          Masuk 
-        </button>
+        <Button type="danger" onClick={handleLogin}>
+          Masuk
+        </Button>
       </form>
-      
+
       <p className="mt-10 text-center text-[13px] text-slate-400 font-medium">
         Belum punya akun? <Link to="/register" className="text-apotek-merah font-black hover:underline ml-1">Daftar Sekarang</Link>
       </p>
