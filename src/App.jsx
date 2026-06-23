@@ -4,6 +4,7 @@ import Loading from "./components/Loading";
 import AuthLayout from "./layouts/AuthLayout";
 import Login from "./pages/auth/Login";
 import LandingPage from './pages/LandingPage'; // Perbaiki path: seharusnya di pages/LandingPage.jsx, bukan pages/auth/LandingPage
+import { User } from 'lucide-react';
 
 const MainLayout = lazy(() => import('./layouts/MainLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -36,6 +37,8 @@ export default function App() {
             <Route path="/chatbox" element={<Chatbox />} />
             <Route path="/obat" element={<Obat />} />
             <Route path="/obat/:id" element={<DetailObat />} />
+            <Route path="/user" element={<User />} />
+
           </Route>
 
           {/* Redirect berdasarkan status login */}

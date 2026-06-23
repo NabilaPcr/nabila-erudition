@@ -10,6 +10,8 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
     { name: 'Data Obat', icon: 'https://cdn-icons-png.flaticon.com/512/3067/3067260.png', path: '/obat' },
     { name: 'Cek Stok', icon: 'https://cdn-icons-png.flaticon.com/512/3067/3067260.png', path: '/cek-stok' },
     { name: 'Chatbox', icon: 'https://cdn-icons-png.flaticon.com/512/589/589708.png', path: '/chatbox', badge: 3 },
+    { name: 'User', icon: 'https://cdn-icons-png.flaticon.com/512/589/589708.png', path: '/user' },
+
   ];
 
   return (
