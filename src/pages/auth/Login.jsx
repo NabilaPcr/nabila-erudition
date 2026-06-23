@@ -1,26 +1,87 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import InputField from '../../components/InputField';
-import Button from '../../components/Button';
-import Alert from '../../components/Alert';
+import InputField from '../../components/InputField';  // ← perhatikan huruf kecil
+import Button from '../../components/Button';          // ← perhatikan huruf kecil
+import Alert from '../../components/Alert';            // ← perhatikan huruf kecil
+import { userAPI } from '../../services/userAPI';
 
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Cek jika sudah login, redirect berdasarkan role
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.role === 'admin') {
+          navigate('/dashboard');
+        } else {
+          navigate('/guest');
+        }
+      } catch (error) {
+        localStorage.removeItem('user');
+      }
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError('');
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    
     if (!formData.email || !formData.password) {
       setError('Email dan password harus diisi!');
       return;
     }
-    navigate('/dashboard');
+
+    try {
+      setLoading(true);
+      setError('');
+
+      const user = await userAPI.loginUser(formData.email, formData.password);
+
+      if (!user) {
+        setError('Email atau password salah!');
+        setLoading(false);
+        return;
+      }
+
+      if (user.status === 'inactive') {
+        setError('Akun Anda dinonaktifkan. Hubungi administrator.');
+        setLoading(false);
+        return;
+      }
+
+      // Simpan data user
+      localStorage.setItem('user', JSON.stringify({
+        id: user.id,
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role,
+        status: user.status
+      }));
+
+      console.log('✅ User logged in:', user);
+      
+      // Redirect berdasarkan role
+      if (user.role === 'admin') {
+        navigate('/dashboard');
+      } else {
+        navigate('/guest');
+      }
+      
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      setError('Terjadi kesalahan. Silahkan coba lagi.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,12 +113,15 @@ export default function Login() {
           required
         />
         <div className="flex justify-end pt-1">
-          <button type="button" className="text-xs font-bold text-slate-400 hover:text-apotek-merah transition-colors">
+          <button 
+            type="button" 
+            className="text-xs font-bold text-slate-400 hover:text-apotek-merah transition-colors"
+          >
             Lupa Password?
           </button>
         </div>
-        <Button type="danger" onClick={handleLogin}>
-          Masuk
+        <Button type="danger" onClick={handleLogin} disabled={loading}>
+          {loading ? 'Memproses...' : 'Masuk'}
         </Button>
       </form>
 

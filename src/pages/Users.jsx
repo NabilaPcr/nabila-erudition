@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import Loading from "../components/Loading";
 import { userAPI } from "../services/userAPI";
-
-// Import Shadcn UI Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import Button from "../components/Button";
+import Badge from "../components/Badge";
+import InputField from "../components/InputField";
 import {
   Table,
   TableBody,
@@ -14,7 +13,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../components/Table";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "../components/Dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,18 +33,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+} from "../components/AlertDialog";
 
-export default function User() {
+export default function Users() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,12 +46,31 @@ export default function User() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [alert, setAlert] = useState(null);
   
+  // Cek autentikasi dan role
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      const user = JSON.parse(userData);
+      if (user.role !== 'admin') {
+        navigate('/guest');
+        return;
+      }
+    } catch (error) {
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
-    fullname: "",
+    name: "",        // ← ganti fullname → name
     email: "",
     password: "",
-    role: "staff",
-    status: "active"
+    role: "user"
   });
 
   useEffect(() => {
@@ -71,19 +81,18 @@ export default function User() {
     try {
       setLoading(true);
       setError(null);
-      console.log('Starting to fetch users...');
+      
       const data = await userAPI.fetchUsers();
-      console.log('Data received:', data);
+      console.log('✅ Users fetched:', data);
       
       if (Array.isArray(data)) {
         setUsers(data);
       } else {
-        console.error('Data is not an array:', data);
         setUsers([]);
         setError('Data user tidak valid');
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("❌ Error fetching users:", error);
       setError(error.message || 'Gagal memuat data user');
       setAlert({ 
         type: "error", 
@@ -98,27 +107,17 @@ export default function User() {
     switch(role) {
       case "admin":
         return <Badge variant="default" className="bg-red-500">Admin</Badge>;
-      case "staff":
-        return <Badge variant="secondary">Staff</Badge>;
+      case "user":
+        return <Badge variant="secondary">User</Badge>;
       default:
         return <Badge variant="outline">{role || 'Unknown'}</Badge>;
     }
   };
 
-  const getStatusBadge = (status) => {
-    switch(status) {
-      case "active":
-        return <Badge variant="default" className="bg-green-500">Active</Badge>;
-      case "inactive":
-        return <Badge variant="destructive">Inactive</Badge>;
-      default:
-        return <Badge variant="outline">{status || 'Unknown'}</Badge>;
-    }
-  };
-
+  // Filter users berdasarkan search
   const filteredUsers = Array.isArray(users) ? users.filter((user) => {
     return searchTerm === "" || 
-      user.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase());
   }) : [];
 
@@ -128,35 +127,39 @@ export default function User() {
   };
 
   const handleTambahUser = async () => {
-    if (!formData.fullname || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password) {
       setAlert({ type: "error", message: "Semua field harus diisi!" });
       setTimeout(() => setAlert(null), 3000);
       return;
     }
 
     try {
+      const emailExists = await userAPI.checkEmailExists(formData.email);
+      if (emailExists) {
+        setAlert({ type: "error", message: "Email sudah terdaftar!" });
+        setTimeout(() => setAlert(null), 3000);
+        return;
+      }
+
       const newUser = {
-        fullname: formData.fullname,
+        fullname: formData.name,  // ← API akan map ke 'name'
         email: formData.email,
         password: formData.password,
-        role: formData.role,
-        status: formData.status,
-        created_at: new Date().toISOString()
+        role: formData.role
       };
 
       const created = await userAPI.createUser(newUser);
       setUsers([...users, created]);
       setDialogOpen(false);
       setFormData({
-        fullname: "",
+        name: "",
         email: "",
         password: "",
-        role: "staff",
-        status: "active"
+        role: "user"
       });
       setAlert({ 
         type: "success", 
-        message: `User ${created.fullname} berhasil ditambahkan!` 
+        message: `User ${created.name} berhasil ditambahkan!` 
       });
       setTimeout(() => setAlert(null), 3000);
     } catch (error) {
@@ -169,28 +172,35 @@ export default function User() {
   const handleEditUser = (user) => {
     setSelectedUser(user);
     setFormData({
-      fullname: user.fullname || "",
+      name: user.name || "",
       email: user.email || "",
       password: "",
-      role: user.role || "staff",
-      status: user.status || "active"
+      role: user.role || "user"
     });
     setEditDialogOpen(true);
   };
 
   const handleUpdateUser = async () => {
-    if (!formData.fullname || !formData.email) {
+    if (!formData.name || !formData.email) {
       setAlert({ type: "error", message: "Nama dan email harus diisi!" });
       setTimeout(() => setAlert(null), 3000);
       return;
     }
 
     try {
+      if (formData.email !== selectedUser.email) {
+        const emailExists = await userAPI.checkEmailExists(formData.email);
+        if (emailExists) {
+          setAlert({ type: "error", message: "Email sudah digunakan user lain!" });
+          setTimeout(() => setAlert(null), 3000);
+          return;
+        }
+      }
+
       const updateData = {
-        fullname: formData.fullname,
+        fullname: formData.name,
         email: formData.email,
-        role: formData.role,
-        status: formData.status
+        role: formData.role
       };
 
       if (formData.password) {
@@ -202,7 +212,7 @@ export default function User() {
       setEditDialogOpen(false);
       setAlert({ 
         type: "success", 
-        message: `User ${updated.fullname} berhasil diupdate!` 
+        message: `User ${updated.name} berhasil diupdate!` 
       });
       setTimeout(() => setAlert(null), 3000);
     } catch (error) {
@@ -212,13 +222,13 @@ export default function User() {
     }
   };
 
-  const handleHapusUser = async (id, fullname) => {
+  const handleHapusUser = async (id, name) => {
     try {
       await userAPI.deleteUser(id);
       setUsers(users.filter(user => user.id !== id));
       setAlert({ 
         type: "warning", 
-        message: `User ${fullname} telah dihapus!` 
+        message: `User ${name} telah dihapus!` 
       });
       setTimeout(() => setAlert(null), 3000);
     } catch (error) {
@@ -240,11 +250,7 @@ export default function User() {
         <div className="mb-4 p-4 rounded-lg bg-red-100 text-red-800">
           <p className="font-bold">Error:</p>
           <p>{error}</p>
-          <Button 
-            variant="outline" 
-            onClick={fetchUsers}
-            className="mt-2"
-          >
+          <Button variant="outline" onClick={fetchUsers} className="mt-2">
             Coba Lagi
           </Button>
         </div>
@@ -264,27 +270,19 @@ export default function User() {
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div className="relative flex-1 max-w-md">
-            <Input
+            <InputField
               type="text"
               placeholder="Cari user berdasarkan nama atau email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/622/622669.png"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30"
-              alt="search"
             />
           </div>
           
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="default" className="bg-red-500 hover:bg-red-600">
-                + Tambah User
-              </Button>
+              <Button type="danger">+ Tambah User</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Tambah User Baru</DialogTitle>
                 <DialogDescription>
@@ -292,91 +290,48 @@ export default function User() {
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="fullname" className="text-right">Nama Lengkap</Label>
-                  <Input
-                    id="fullname"
-                    name="fullname"
-                    value={formData.fullname}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                    placeholder="John Doe"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                    placeholder="john@apotek.com"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="password" className="text-right">Password</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                    placeholder="Minimal 6 karakter"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="role" className="text-right">Role</Label>
-                  <Select 
+                <InputField
+                  label="Nama Lengkap"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Nama Lengkap"
+                />
+                <InputField
+                  label="Email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="email@domain.com"
+                />
+                <InputField
+                  label="Password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Minimal 6 karakter"
+                />
+                <div>
+                  <label className="text-xs font-bold text-slate-600 block mb-1">Role</label>
+                  <select
+                    name="role"
                     value={formData.role}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-apotek-merah focus:ring-2 focus:ring-apotek-merah/20 outline-none transition-all text-sm"
                   >
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Pilih role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="staff">Staff</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="status" className="text-right">Status</Label>
-                  <Select 
-                    value={formData.status}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
-                  >
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Pilih status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
-                <Button variant="default" onClick={handleTambahUser} className="bg-red-500">Simpan</Button>
+                <Button type="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+                <Button type="danger" onClick={handleTambahUser}>Simpan</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
-
-        {/* Debug Info */}
-        <div className="mb-4 p-2 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-500">
-            Total Users: {users.length} | Filtered: {filteredUsers.length}
-          </p>
-          <button 
-            onClick={fetchUsers}
-            className="text-xs text-blue-500 hover:underline"
-          >
-            Refresh Data
-          </button>
         </div>
 
         <div className="overflow-x-auto">
@@ -384,36 +339,26 @@ export default function User() {
             <TableHeader>
               <TableRow>
                 <TableHead>No</TableHead>
-                <TableHead>Nama Lengkap</TableHead>
+                <TableHead>Nama</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Tanggal Daftar</TableHead>
                 <TableHead>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan="7" className="text-center text-gray-500 py-8">
+                  <TableCell colSpan="5" className="text-center text-gray-500 py-8">
                     {searchTerm ? "User tidak ditemukan" : "Belum ada data user"}
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredUsers.map((user, index) => (
-                  <TableRow key={user.id || index}>
-                    <TableCell className="text-gray-500">{index + 1}</TableCell>
-                    <TableCell className="font-bold text-gray-800">{user.fullname || '-'}</TableCell>
+                  <TableRow key={user.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell className="font-bold text-gray-800">{user.name || '-'}</TableCell>
                     <TableCell className="text-gray-500">{user.email || '-'}</TableCell>
                     <TableCell>{getRoleBadge(user.role)}</TableCell>
-                    <TableCell>{getStatusBadge(user.status)}</TableCell>
-                    <TableCell className="text-gray-500 text-sm">
-                      {user.created_at ? new Date(user.created_at).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                      }) : '-'}
-                    </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <button 
@@ -432,13 +377,12 @@ export default function User() {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Yakin hapus user ini?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                User <span className="font-bold">{user.fullname}</span> akan dihapus secara permanen.
-                                Tindakan ini tidak bisa dibatalkan.
+                                User <span className="font-bold">{user.name}</span> akan dihapus permanen.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Batal</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleHapusUser(user.id, user.fullname)}>
+                              <AlertDialogAction onClick={() => handleHapusUser(user.id, user.name)}>
                                 Ya, Hapus
                               </AlertDialogAction>
                             </AlertDialogFooter>
@@ -458,8 +402,9 @@ export default function User() {
         </div>
       </div>
 
+      {/* Dialog Edit User */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
@@ -467,73 +412,43 @@ export default function User() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-fullname" className="text-right">Nama Lengkap</Label>
-              <Input
-                id="edit-fullname"
-                name="fullname"
-                value={formData.fullname}
-                onChange={handleInputChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-email" className="text-right">Email</Label>
-              <Input
-                id="edit-email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-password" className="text-right">Password</Label>
-              <Input
-                id="edit-password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="col-span-3"
-                placeholder="Kosongkan jika tidak diubah"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-role" className="text-right">Role</Label>
-              <Select 
+            <InputField
+              label="Nama Lengkap"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+            />
+            <InputField
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <InputField
+              label="Password (kosongkan jika tidak diubah)"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Kosongkan jika tidak diubah"
+            />
+            <div>
+              <label className="text-xs font-bold text-slate-600 block mb-1">Role</label>
+              <select
+                name="role"
                 value={formData.role}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-apotek-merah focus:ring-2 focus:ring-apotek-merah/20 outline-none transition-all text-sm"
               >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Pilih role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="staff">Staff</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-status" className="text-right">Status</Label>
-              <Select 
-                value={formData.status}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Pilih status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Batal</Button>
-            <Button variant="default" onClick={handleUpdateUser} className="bg-red-500">Update</Button>
+            <Button type="outline" onClick={() => setEditDialogOpen(false)}>Batal</Button>
+            <Button type="danger" onClick={handleUpdateUser}>Update</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

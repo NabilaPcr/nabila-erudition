@@ -25,8 +25,7 @@ export const userAPI = {
             return response.data;
         } catch (error) {
             console.error('❌ Error in fetchUsers:', error.response?.data || error.message);
-            // Return empty array instead of throwing error
-            return [];
+            throw error;
         }
     },
 
@@ -43,7 +42,42 @@ export const userAPI = {
             return response.data[0];
         } catch (error) {
             console.error('❌ Error in fetchUserById:', error);
-            return null;
+            throw error;
+        }
+    },
+
+    // Cek email sudah terdaftar atau belum
+    async checkEmailExists(email) {
+        try {
+            const response = await axios.get(API_URL, {
+                headers,
+                params: { 
+                    email: `eq.${email}`,
+                    select: 'email'
+                }
+            });
+            return response.data.length > 0;
+        } catch (error) {
+            console.error('❌ Error in checkEmailExists:', error);
+            throw error;
+        }
+    },
+
+    // Login user
+    async loginUser(email, password) {
+        try {
+            const response = await axios.get(API_URL, {
+                headers,
+                params: { 
+                    email: `eq.${email}`,
+                    password_hash: `eq.${password}`,  // ← perbaiki: password_hash
+                    select: '*'
+                }
+            });
+            return response.data[0] || null;
+        } catch (error) {
+            console.error('❌ Error in loginUser:', error);
+            throw error;
         }
     },
 
@@ -51,7 +85,20 @@ export const userAPI = {
     async createUser(data) {
         try {
             console.log('📝 Creating user:', data);
-            const response = await axios.post(API_URL, data, {
+            
+            // Map data ke struktur tabel yang benar
+            const userData = {
+                name: data.fullname,           // ← fullname → name
+                email: data.email,
+                password_hash: data.password,  // ← password → password_hash
+                role: data.role || 'user',     // ← default 'user'
+                // status tidak ada di tabel, jadi dihapus
+                // created_at tidak ada di tabel, jadi dihapus
+            };
+            
+            console.log('📝 Mapped user data:', userData);
+            
+            const response = await axios.post(API_URL, userData, {
                 headers: {
                     ...headers,
                     Prefer: "return=representation"
@@ -69,7 +116,16 @@ export const userAPI = {
     async updateUser(id, data) {
         try {
             console.log('📝 Updating user:', id, data);
-            const response = await axios.patch(API_URL, data, {
+            
+            // Map data ke struktur tabel yang benar
+            const userData = {};
+            if (data.fullname) userData.name = data.fullname;
+            if (data.email) userData.email = data.email;
+            if (data.password) userData.password_hash = data.password;
+            if (data.role) userData.role = data.role;
+            // status tidak ada di tabel, jadi dihapus
+            
+            const response = await axios.patch(API_URL, userData, {
                 headers: {
                     ...headers,
                     Prefer: "return=representation"
