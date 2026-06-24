@@ -3,17 +3,14 @@ import { useNavigate } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import Loading from "../components/Loading";
 import { userAPI } from "../services/userAPI";
+
+// Import default (tanpa kurung kurawal)
 import Button from "../components/Button";
 import Badge from "../components/Badge";
 import InputField from "../components/InputField";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../components/Table";
+import Table from "../components/Table";  // ← perbaiki: tanpa kurung kurawal
+
+// Import dari components/ui (named exports)
 import {
   Dialog,
   DialogContent,
@@ -22,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../components/Dialog";
+} from "../components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../components/AlertDialog";
+} from "../components/ui/alert-dialog";
 
 export default function Users() {
   const navigate = useNavigate();
@@ -67,7 +64,7 @@ export default function Users() {
   }, [navigate]);
 
   const [formData, setFormData] = useState({
-    name: "",        // ← ganti fullname → name
+    name: "",
     email: "",
     password: "",
     role: "user"
@@ -106,11 +103,11 @@ export default function Users() {
   const getRoleBadge = (role) => {
     switch(role) {
       case "admin":
-        return <Badge variant="default" className="bg-red-500">Admin</Badge>;
+        return <Badge type="danger">Admin</Badge>;
       case "user":
-        return <Badge variant="secondary">User</Badge>;
+        return <Badge type="secondary">User</Badge>;
       default:
-        return <Badge variant="outline">{role || 'Unknown'}</Badge>;
+        return <Badge type="outline">{role || 'Unknown'}</Badge>;
     }
   };
 
@@ -142,7 +139,7 @@ export default function Users() {
       }
 
       const newUser = {
-        fullname: formData.name,  // ← API akan map ke 'name'
+        fullname: formData.name,
         email: formData.email,
         password: formData.password,
         role: formData.role
@@ -242,15 +239,18 @@ export default function Users() {
     return <Loading text="Memuat data user..." />;
   }
 
+  // Header untuk tabel
+  const tableHeaders = ['No', 'Nama', 'Email', 'Role', 'Aksi'];
+
   return (
     <div className="animate-fade-in">
-      <PageHeader title="Manajemen User" subtitle="Manajemen > Data User" />
+      <PageHeader title="Daftar User" subtitle="Home > Data User" />
 
       {error && (
         <div className="mb-4 p-4 rounded-lg bg-red-100 text-red-800">
           <p className="font-bold">Error:</p>
           <p>{error}</p>
-          <Button variant="outline" onClick={fetchUsers} className="mt-2">
+          <Button type="outline" onClick={fetchUsers} className="mt-2">
             Coba Lagi
           </Button>
         </div>
@@ -282,7 +282,7 @@ export default function Users() {
             <DialogTrigger asChild>
               <Button type="danger">+ Tambah User</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Tambah User Baru</DialogTitle>
                 <DialogDescription>
@@ -334,68 +334,56 @@ export default function Users() {
           </Dialog>
         </div>
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>No</TableHead>
-                <TableHead>Nama</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Aksi</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan="5" className="text-center text-gray-500 py-8">
-                    {searchTerm ? "User tidak ditemukan" : "Belum ada data user"}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredUsers.map((user, index) => (
-                  <TableRow key={user.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell className="font-bold text-gray-800">{user.name || '-'}</TableCell>
-                    <TableCell className="text-gray-500">{user.email || '-'}</TableCell>
-                    <TableCell>{getRoleBadge(user.role)}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => handleEditUser(user)}
-                          className="text-blue-500 hover:text-blue-700 text-sm"
-                        >
-                          Edit
+        {/* Tabel User */}
+        <Table headers={tableHeaders}>
+          {filteredUsers.length === 0 ? (
+            <tr>
+              <td colSpan="5" className="text-center text-gray-500 py-8">
+                {searchTerm ? "User tidak ditemukan" : "Belum ada data user"}
+              </td>
+            </tr>
+          ) : (
+            filteredUsers.map((user, index) => (
+              <tr key={user.id}>
+                <td className="px-4 py-4">{index + 1}</td>
+                <td className="px-4 py-4 font-bold text-gray-800">{user.name || '-'}</td>
+                <td className="px-4 py-4 text-gray-500">{user.email || '-'}</td>
+                <td className="px-4 py-4">{getRoleBadge(user.role)}</td>
+                <td className="px-4 py-4">
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => handleEditUser(user)}
+                      className="text-blue-500 hover:text-blue-700 text-sm"
+                    >
+                      Edit
+                    </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button className="text-red-500 hover:text-red-700 text-sm ml-2">
+                          Hapus
                         </button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <button className="text-red-500 hover:text-red-700 text-sm ml-2">
-                              Hapus
-                            </button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Yakin hapus user ini?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                User <span className="font-bold">{user.name}</span> akan dihapus permanen.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Batal</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleHapusUser(user.id, user.name)}>
-                                Ya, Hapus
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Yakin hapus user ini?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            User <span className="font-bold">{user.name}</span> akan dihapus permanen.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleHapusUser(user.id, user.name)}>
+                            Ya, Hapus
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
+        </Table>
 
         <div className="mt-6 text-center text-sm text-gray-500">
           Menampilkan {filteredUsers.length} dari {users.length} data user
@@ -404,7 +392,7 @@ export default function Users() {
 
       {/* Dialog Edit User */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>

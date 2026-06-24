@@ -71,10 +71,10 @@ export default function Register() {
       }
 
       const newUser = {
-        fullname: formData.name,  // ← API akan map ke 'name'
+        fullname: formData.name,  
         email: formData.email,
         password: formData.password,
-        role: 'user'              // ← ganti 'staff' → 'user'
+        role: 'user'            
       };
 
       await userAPI.createUser(newUser);
@@ -98,7 +98,7 @@ export default function Register() {
     <div className="animate-fade-in">
       <div className="text-center mb-8">
         <h3 className="text-xl font-bold text-slate-700">Buat Akun Baru</h3>
-        <p className="text-sm text-slate-400 mt-1 font-medium">Daftar sebagai staf Apotek Keluarga 25</p>
+        <p className="text-sm text-slate-400 mt-1 font-medium">Daftar untuk mengakses Website Apotek Keluarga 25</p>
       </div>
 
       {error && <Alert type="error" message={error} onClose={() => setError('')} />}

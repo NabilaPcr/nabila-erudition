@@ -29,7 +29,7 @@ export const userAPI = {
         }
     },
 
-    // Ambil satu user berdasarkan id
+    // Ambil user berdasarkan id
     async fetchUserById(id) {
         try {
             const response = await axios.get(API_URL, {
@@ -81,19 +81,15 @@ export const userAPI = {
         }
     },
 
-    // Tambah user baru
     async createUser(data) {
         try {
             console.log('📝 Creating user:', data);
-            
-            // Map data ke struktur tabel yang benar
             const userData = {
-                name: data.fullname,           // ← fullname → name
+                name: data.fullname,           
                 email: data.email,
-                password_hash: data.password,  // ← password → password_hash
-                role: data.role || 'user',     // ← default 'user'
-                // status tidak ada di tabel, jadi dihapus
-                // created_at tidak ada di tabel, jadi dihapus
+                password_hash: data.password,  
+                role: data.role || 'user',     
+              
             };
             
             console.log('📝 Mapped user data:', userData);
@@ -112,18 +108,15 @@ export const userAPI = {
         }
     },
 
-    // Update user berdasarkan id
     async updateUser(id, data) {
         try {
             console.log('📝 Updating user:', id, data);
             
-            // Map data ke struktur tabel yang benar
             const userData = {};
             if (data.fullname) userData.name = data.fullname;
             if (data.email) userData.email = data.email;
             if (data.password) userData.password_hash = data.password;
             if (data.role) userData.role = data.role;
-            // status tidak ada di tabel, jadi dihapus
             
             const response = await axios.patch(API_URL, userData, {
                 headers: {

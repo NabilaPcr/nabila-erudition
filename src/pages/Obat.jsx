@@ -4,23 +4,16 @@ import obatData from "../data/obat.json";
 import PageHeader from "../components/PageHeader";
 import Loading from "../components/Loading";
 
-// Import Shadcn UI Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+// Import Components
+import { Button } from "../components/ui/button";
+import Badge from "../components/Badge";
+import Table from "../components/Table";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs";
+} from "../components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "../components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,16 +33,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+} from "../components/ui/alert-dialog";
+import Input from "../components/InputField";
+import SelectField from "../components/SelectField";
 
 export default function Obat() {
   const [obat, setObat] = useState([]);
@@ -114,6 +100,12 @@ export default function Obat() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Handle select change
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   // Handle submit tambah obat
   const handleTambahObat = () => {
     const newObat = {
@@ -140,6 +132,28 @@ export default function Obat() {
 
   // Kategori untuk Tabs
   const categories = ["semua", "Obat Bebas", "Obat Keras", "Obat Bebas Terbatas", "Suplemen", "Herbal", "Antiseptik", "Alkes"];
+
+  // Options untuk SelectField
+  const kategoriOptions = [
+    { value: "Obat Bebas", label: "Obat Bebas" },
+    { value: "Obat Keras", label: "Obat Keras" },
+    { value: "Obat Bebas Terbatas", label: "Obat Bebas Terbatas" },
+    { value: "Suplemen", label: "Suplemen" },
+    { value: "Herbal", label: "Herbal" },
+    { value: "Antiseptik", label: "Antiseptik" },
+    { value: "Alkes", label: "Alkes" },
+  ];
+
+  const satuanOptions = [
+    { value: "tablet", label: "Tablet" },
+    { value: "kapsul", label: "Kapsul" },
+    { value: "botol", label: "Botol" },
+    { value: "strip", label: "Strip" },
+    { value: "box", label: "Box" },
+  ];
+
+  // Header untuk tabel
+  const tableHeaders = ["Kode", "Nama Obat", "Kategori", "Merk", "Harga", "Stok", "Status", "Aksi"];
 
   if (loading) {
     return <Loading text="Memuat data obat..." />;
@@ -192,7 +206,7 @@ export default function Obat() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="kode" className="text-right">Kode</Label>
+                  <label htmlFor="kode" className="text-right text-sm font-medium text-gray-700">Kode</label>
                   <Input
                     id="kode"
                     name="kode"
@@ -203,7 +217,7 @@ export default function Obat() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="nama" className="text-right">Nama Obat</Label>
+                  <label htmlFor="nama" className="text-right text-sm font-medium text-gray-700">Nama Obat</label>
                   <Input
                     id="nama"
                     name="nama"
@@ -214,24 +228,18 @@ export default function Obat() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="kategori" className="text-right">Kategori</Label>
-                  <Select onValueChange={(value) => setFormData(prev => ({ ...prev, kategori: value }))}>
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Pilih kategori" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Obat Bebas">Obat Bebas</SelectItem>
-                      <SelectItem value="Obat Keras">Obat Keras</SelectItem>
-                      <SelectItem value="Obat Bebas Terbatas">Obat Bebas Terbatas</SelectItem>
-                      <SelectItem value="Suplemen">Suplemen</SelectItem>
-                      <SelectItem value="Herbal">Herbal</SelectItem>
-                      <SelectItem value="Antiseptik">Antiseptik</SelectItem>
-                      <SelectItem value="Alkes">Alkes</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <label htmlFor="kategori" className="text-right text-sm font-medium text-gray-700">Kategori</label>
+                  <SelectField
+                    id="kategori"
+                    name="kategori"
+                    value={formData.kategori}
+                    onChange={handleSelectChange}
+                    options={kategoriOptions}
+                    className="col-span-3"
+                  />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="merk" className="text-right">Merk</Label>
+                  <label htmlFor="merk" className="text-right text-sm font-medium text-gray-700">Merk</label>
                   <Input
                     id="merk"
                     name="merk"
@@ -242,7 +250,7 @@ export default function Obat() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="harga" className="text-right">Harga</Label>
+                  <label htmlFor="harga" className="text-right text-sm font-medium text-gray-700">Harga</label>
                   <Input
                     id="harga"
                     name="harga"
@@ -254,7 +262,7 @@ export default function Obat() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="stok" className="text-right">Stok</Label>
+                  <label htmlFor="stok" className="text-right text-sm font-medium text-gray-700">Stok</label>
                   <Input
                     id="stok"
                     name="stok"
@@ -263,6 +271,17 @@ export default function Obat() {
                     onChange={handleInputChange}
                     className="col-span-3"
                     placeholder="100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label htmlFor="satuan" className="text-right text-sm font-medium text-gray-700">Satuan</label>
+                  <SelectField
+                    id="satuan"
+                    name="satuan"
+                    value={formData.satuan}
+                    onChange={handleSelectChange}
+                    options={satuanOptions}
+                    className="col-span-3"
                   />
                 </div>
               </div>
@@ -289,76 +308,68 @@ export default function Obat() {
           </TabsList>
 
           <TabsContent value={activeTab} className="mt-6">
-            {/* Tabel Obat */}
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Kode</TableHead>
-                    <TableHead>Nama Obat</TableHead>
-                    <TableHead>Kategori</TableHead>
-                    <TableHead>Merk</TableHead>
-                    <TableHead>Harga</TableHead>
-                    <TableHead>Stok</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Aksi</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredObat.map((item) => {
-                    const status = getStatusStok(item.stok);
-                    return (
-                      <TableRow key={item.id}>
-                        <TableCell className="font-bold text-gray-800">{item.kode}</TableCell>
-                        <TableCell>
-                          <Link to={`/obat/${item.id}`} className="text-red-500 hover:underline font-medium">
-                            {item.nama}
+            {/* Tabel Obat - menggunakan komponen Table dengan headers */}
+            <Table headers={tableHeaders}>
+              {filteredObat.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center text-gray-500 py-8">
+                    {searchTerm ? "Obat tidak ditemukan" : "Belum ada data obat"}
+                  </td>
+                </tr>
+              ) : (
+                filteredObat.map((item) => {
+                  const status = getStatusStok(item.stok);
+                  return (
+                    <tr key={item.id}>
+                      <td className="px-4 py-4 font-bold text-gray-800">{item.kode}</td>
+                      <td className="px-4 py-4">
+                        <Link to={`/obat/${item.id}`} className="text-red-500 hover:underline font-medium">
+                          {item.nama}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-4 text-gray-500">{item.kategori}</td>
+                      <td className="px-4 py-4 text-gray-500">{item.merk}</td>
+                      <td className="px-4 py-4 font-bold text-gray-800">{formatHarga(item.harga)}</td>
+                      <td className="px-4 py-4 font-bold">
+                        {item.stok} <span className="text-gray-400 font-normal text-xs">{item.satuan}</span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <Badge variant={status.variant}>{status.text}</Badge>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex gap-2">
+                          <Link to={`/obat/${item.id}`} className="text-blue-500 hover:text-blue-700 text-sm">
+                            Detail
                           </Link>
-                        </TableCell>
-                        <TableCell className="text-gray-500">{item.kategori}</TableCell>
-                        <TableCell className="text-gray-500">{item.merk}</TableCell>
-                        <TableCell className="font-bold text-gray-800">{formatHarga(item.harga)}</TableCell>
-                        <TableCell className="font-bold">
-                          {item.stok} <span className="text-gray-400 font-normal text-xs">{item.satuan}</span>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={status.variant}>{status.text}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Link to={`/obat/${item.id}`} className="text-blue-500 hover:text-blue-700 text-sm">
-                              Detail
-                            </Link>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <button className="text-red-500 hover:text-red-700 text-sm ml-2">
-                                  Hapus
-                                </button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Yakin hapus obat ini?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Obat <span className="font-bold">{item.nama}</span> akan dihapus secara permanen.
-                                    Tindakan ini tidak bisa dibatalkan.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction onClick={() => handleHapusObat(item.id, item.nama)}>
-                                    Ya, Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <button className="text-red-500 hover:text-red-700 text-sm ml-2">
+                                Hapus
+                              </button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Yakin hapus obat ini?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Obat <span className="font-bold">{item.nama}</span> akan dihapus secara permanen.
+                                  Tindakan ini tidak bisa dibatalkan.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Batal</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleHapusObat(item.id, item.nama)}>
+                                  Ya, Hapus
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </Table>
 
             {/* Info jumlah data */}
             <div className="mt-6 text-center text-sm text-gray-500">

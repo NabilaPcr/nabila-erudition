@@ -11,7 +11,6 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Cek jika sudah login, redirect berdasarkan role
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -70,7 +69,6 @@ export default function Login() {
 
       console.log('✅ User logged in:', user);
       
-      // Redirect berdasarkan role
       if (user.role === 'admin') {
         navigate('/dashboard');
       } else {

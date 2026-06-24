@@ -1,18 +1,53 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Badge from './Badge';
 
 export default function Sidebar({ isCollapsed, setIsCollapsed }) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  const menuItems = [
+  // Ambil data user dari localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (error) {
+        setUser(null);
+      }
+    }
+  }, []);
+
+  // Menu items untuk semua user
+  const allMenuItems = [
     { name: 'Dashboard', icon: 'https://cdn-icons-png.flaticon.com/512/1828/1828673.png', path: '/dashboard' },
     { name: 'Data Obat', icon: 'https://cdn-icons-png.flaticon.com/512/3067/3067260.png', path: '/obat' },
     { name: 'Cek Stok', icon: 'https://cdn-icons-png.flaticon.com/512/3067/3067260.png', path: '/cek-stok' },
     { name: 'Chatbox', icon: 'https://cdn-icons-png.flaticon.com/512/589/589708.png', path: '/chatbox', badge: 3 },
-    { name: 'User', icon: 'https://cdn-icons-png.flaticon.com/512/589/589708.png', path: '/user' },
-
   ];
+
+  // Menu items dengan User (hanya untuk admin)
+  const getMenuItems = () => {
+    const items = [...allMenuItems];
+    if (user?.role === 'admin') {
+      items.push({ 
+        name: 'User', 
+        icon: 'https://cdn-icons-png.flaticon.com/512/589/589708.png', 
+        path: '/user' 
+      });
+    }
+    return items;
+  };
+
+  const menuItems = getMenuItems();
+
+  // Handle logout - HAPUS data user dari localStorage
+  const handleLogout = (e) => {
+    e.preventDefault(); // Mencegah navigasi default
+    localStorage.removeItem('user'); // Hapus data user
+    navigate('/login'); // Redirect ke halaman login
+  };
 
   return (
     <div className={`${isCollapsed ? 'w-24' : 'w-72'} transition-all duration-300 flex flex-col border-r border-gray-100 h-screen sticky top-0 bg-white z-20`}>
@@ -53,10 +88,14 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
       </nav>
 
       <div className="p-8">
-        <Link to="/login" className="flex items-center gap-4 px-4 py-4 text-slate-400 hover:text-red-400 transition-colors">
+        {/* Ganti Link dengan button untuk logout */}
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-4 px-4 py-4 text-slate-400 hover:text-red-400 transition-colors w-full"
+        >
           <img src="https://cdn-icons-png.flaticon.com/512/1828/1828445.png" className="w-5 h-5 opacity-40" alt="" />
           {!isCollapsed && <span className="text-xs font-bold">Sign Out</span>}
-        </Link>
+        </button>
       </div>
     </div>
   );
