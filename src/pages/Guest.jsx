@@ -79,7 +79,7 @@ export default function Guest() {
     fetchObat();
   }, []);
 
-  const fetchObat = async () => {
+  async function fetchObat() {
     try {
       setLoading(true);
       const dummyObat = [

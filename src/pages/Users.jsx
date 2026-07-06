@@ -74,7 +74,7 @@ export default function Users() {
     fetchUsers();
   }, []);
 
-  const fetchUsers = async () => {
+  async function fetchUsers() {
     try {
       setLoading(true);
       setError(null);

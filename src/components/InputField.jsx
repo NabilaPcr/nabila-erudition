@@ -8,9 +8,9 @@ export default function InputField({
   required = false,
 }) {
   return (
-    <div className="mb-4">
+    <div className="flex flex-col gap-1.5 w-full">
       {label && (
-        <label className="block text-gray-700 font-medium mb-2">
+        <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -21,7 +21,7 @@ export default function InputField({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-semibold text-gray-900 outline-none focus:border-emerald-500 focus:bg-white transition-all duration-200 placeholder:text-gray-300 placeholder:font-normal"
       />
     </div>
   );

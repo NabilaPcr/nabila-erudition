@@ -5,62 +5,68 @@ import AuthLayout from "./layouts/AuthLayout";
 import Login from "./pages/auth/Login";
 import LandingPage from './pages/LandingPage';
 
-const MainLayout = lazy(() => import('./layouts/MainLayout'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const CekStok = lazy(() => import('./pages/CekStok'));
-const Chatbox = lazy(() => import('./pages/Chatbox'));
+// ── Admin (lazy) ──────────────────────────────────────────
+const MainLayout            = lazy(() => import('./layouts/MainLayout'));
+const DashboardAdmin        = lazy(() => import('./pages/admin/DashboardAdmin'));
+const CustomerManagement    = lazy(() => import('./pages/admin/CustomerManagement'));
+const TransactionManagement = lazy(() => import('./pages/admin/TransactionManagement'));
+const PrescriptionManagement= lazy(() => import('./pages/admin/PrescriptionManagement'));
+const ProductManagement     = lazy(() => import('./pages/admin/ProductManagement'));
+const CategoryManagement    = lazy(() => import('./pages/admin/CategoryManagement'));
+const InventoryManagement   = lazy(() => import('./pages/admin/InventoryManagement'));
+const MarketingManagement   = lazy(() => import('./pages/admin/MarketingManagement'));
+const ReportsAnalytics      = lazy(() => import('./pages/admin/ReportsAnalytics'));
+const StaffManagement       = lazy(() => import('./pages/admin/StaffManagement'));
+
+// ── User (lazy) ───────────────────────────────────────────
+const UserLayout      = lazy(() => import('./layouts/UserLayout'));
+const ShopPage        = lazy(() => import('./pages/user/ShopPage'));
+const CartPage        = lazy(() => import('./pages/user/CartPage'));
+const OrdersPage      = lazy(() => import('./pages/user/OrdersPage'));
+const UserPrescription= lazy(() => import('./pages/user/PrescriptionPage'));
+const ProfilePage     = lazy(() => import('./pages/user/ProfilePage'));
+
+// ── Auth ──────────────────────────────────────────────────
 const Register = lazy(() => import('./pages/auth/Register'));
-const Obat = lazy(() => import('./pages/Obat'));  
-const DetailObat = lazy(() => import('./pages/DetailObat'));
-const User = lazy(() => import('./pages/Users'));
-const Guest = lazy(() => import('./pages/Guest')); // ← Import Guest
 
-// Protected Route Component
-function ProtectedRoute({ children, requiredRole }) {
-  const userData = localStorage.getItem('user');
-  
-  if (!userData) {
-    return <Navigate to="/login" replace />;
-  }
-
+// ── Role check helper ─────────────────────────────────────
+function getUser() {
   try {
-    const user = JSON.parse(userData);
-    
-    // Jika requiredRole admin dan user bukan admin
-    if (requiredRole === 'admin' && user.role !== 'admin') {
-      return <Navigate to="/guest" replace />;
-    }
-    
-    // Jika requiredRole user/staff dan user adalah admin
-    if (requiredRole === 'staff' && user.role === 'admin') {
-      return <Navigate to="/dashboard" replace />;
-    }
-  } catch (error) {
-    localStorage.removeItem('user');
-    return <Navigate to="/login" replace />;
-  }
+    const d = localStorage.getItem('user');
+    return d ? JSON.parse(d) : null;
+  } catch { return null; }
+}
 
+const ADMIN_ROLES = ['admin', 'apoteker', 'kasir'];
+
+// ── Protected Route ───────────────────────────────────────
+function ProtectedRoute({ children, allowRoles }) {
+  const user = getUser();
+  if (!user) return <Navigate to="/login" replace />;
+  if (allowRoles && !allowRoles.includes(user.role)) {
+    return <Navigate to={ADMIN_ROLES.includes(user.role) ? '/dashboard' : '/'} replace />;
+  }
   return children;
 }
 
-// Route Redirect berdasarkan role
-function RoleBasedRedirect() {
-  const userData = localStorage.getItem('user');
-  
-  if (!userData) {
-    return <Navigate to="/login" replace />;
+// ── Public route: redirect if already logged in ───────────
+function PublicRoute({ children }) {
+  const user = getUser();
+  if (user) {
+    return ADMIN_ROLES.includes(user.role)
+      ? <Navigate to="/dashboard" replace />
+      : <Navigate to="/shop" replace />;
   }
-  
-  try {
-    const user = JSON.parse(userData);
-    if (user.role === 'admin') {
-      return <Navigate to="/dashboard" replace />;
-    } else {
-      return <Navigate to="/guest" replace />;
-    }
-  } catch (error) {
-    return <Navigate to="/login" replace />;
-  }
+  return children;
+}
+
+// ── Redirect setelah login ────────────────────────────────
+function RoleRedirect() {
+  const user = getUser();
+  if (!user) return <Navigate to="/" replace />;
+  return ADMIN_ROLES.includes(user.role)
+    ? <Navigate to="/dashboard" replace />
+    : <Navigate to="/shop" replace />;
 }
 
 export default function App() {
@@ -68,54 +74,53 @@ export default function App() {
     <Router>
       <Suspense fallback={<Loading />}>
         <Routes>
-          {/* LandingPage */}
+          {/* ── Public Landing Page (semua bisa akses) ── */}
           <Route path="/" element={<LandingPage />} />
-          
-          {/* Auth Layout */}
+
+          {/* ── Auth ─────────────────────────────────── */}
           <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Route>
-          
-          {/* Main Layout - untuk Admin */}
-          <Route element={<MainLayout />}>
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <Dashboard />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path="/cek-stok" element={<CekStok />} />
-            <Route path="/chatbox" element={<Chatbox />} />
-            <Route path="/obat" element={<Obat />} />
-            <Route path="/obat/:id" element={<DetailObat />} />
-            
-            <Route 
-              path="/user" 
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <User />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
           </Route>
 
-          {/* Guest Layout - untuk Staff/User Biasa (tanpa sidebar) */}
-          <Route 
-            path="/guest" 
-            element={
-              <ProtectedRoute requiredRole="staff">
-                <Guest />
+          {/* ── Admin / CRM Layout ───────────────────── */}
+          <Route element={
+            <ProtectedRoute allowRoles={ADMIN_ROLES}>
+              <MainLayout />
+            </ProtectedRoute>
+          }>
+            <Route path="/dashboard"   element={<DashboardAdmin />} />
+            <Route path="/customers"   element={<CustomerManagement />} />
+            <Route path="/transactions"element={<TransactionManagement />} />
+            <Route path="/prescriptions" element={<PrescriptionManagement />} />
+            <Route path="/products"    element={<ProductManagement />} />
+            <Route path="/categories"  element={<CategoryManagement />} />
+            <Route path="/inventory"   element={<InventoryManagement />} />
+            <Route path="/marketing"   element={<MarketingManagement />} />
+            <Route path="/reports"     element={<ReportsAnalytics />} />
+            <Route path="/staff" element={
+              <ProtectedRoute allowRoles={['admin']}>
+                <StaffManagement />
               </ProtectedRoute>
-            } 
-          />
+            } />
+          </Route>
 
-          {/* Redirect berdasarkan role */}
-          <Route path="/dashboard" element={<RoleBasedRedirect />} />
-          <Route path="/guest" element={<RoleBasedRedirect />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* ── User Layout ───────────────────────────── */}
+          <Route element={
+            <ProtectedRoute allowRoles={['user']}>
+              <UserLayout />
+            </ProtectedRoute>
+          }>
+            <Route path="/shop"            element={<ShopPage />} />
+            <Route path="/cart"            element={<CartPage />} />
+            <Route path="/orders"          element={<OrdersPage />} />
+            <Route path="/my-prescription" element={<UserPrescription />} />
+            <Route path="/profile"         element={<ProfilePage />} />
+          </Route>
+
+          {/* ── Redirect & Fallback ───────────────────── */}
+          <Route path="/redirect" element={<RoleRedirect />} />
+          <Route path="*"         element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </Router>
