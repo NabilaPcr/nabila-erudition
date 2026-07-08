@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { userAPI } from "../services/userAPI";
 
 const ADMIN_ROLES = ['admin', 'apoteker', 'kasir'];
 
@@ -63,135 +64,42 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    if (!formData.email || !formData.password || !formData.fullname) return;
+ const handleRegister = async (e) => {
+  e.preventDefault();
 
+  if (!formData.email || !formData.password || !formData.fullname) return;
+
+  try {
     setLoading(true);
-    // Simulate register
-    setTimeout(() => {
-      const newUser = {
-        id: `user-${Date.now()}`,
-        fullname: formData.fullname,
-        email: formData.email,
-        role: 'user', // default user
-        status: 'active'
-      };
-      localStorage.setItem('user', JSON.stringify(newUser));
-      navigate('/shop');
-    }, 800);
-  };
 
-  return (
-    <div className="animate-fade-in w-full">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-gray-900 m-0 mb-1">
-          Daftar Akun Baru
-        </h1>
-        <p className="text-sm text-gray-400 m-0 font-medium">
-          Bergabunglah dengan ribuan keluarga lainnya
-        </p>
-      </div>
+    // cek email
+    const emailExists = await userAPI.checkEmailExists(formData.email);
 
-      {/* Form */}
-      <form className="flex flex-col gap-4 w-full" onSubmit={handleRegister}>
-        {/* Fullname */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-            Nama Lengkap
-          </label>
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-              <UserIcon />
-            </span>
-            <input
-              type="text"
-              name="fullname"
-              value={formData.fullname}
-              onChange={handleChange}
-              placeholder="Contoh: Budi Santoso"
-              required
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 outline-none focus:border-emerald-500 focus:bg-white transition-all"
-            />
-          </div>
-        </div>
+    if (emailExists) {
+      alert("Email sudah terdaftar!");
+      setLoading(false);
+      return;
+    }
 
-        {/* Email */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-            Email Address
-          </label>
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-              <MailIcon />
-            </span>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="nama@apotek.com"
-              required
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 outline-none focus:border-emerald-500 focus:bg-white transition-all"
-            />
-          </div>
-        </div>
+    // simpan ke supabase
+    const newUser = await userAPI.createUser({
+      fullname: formData.fullname,
+      email: formData.email,
+      password: formData.password,
+      role: "user"
+    });
 
-        {/* Password */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-            Password
-          </label>
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-              <LockIcon />
-            </span>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Minimal 6 karakter"
-              required
-              minLength={6}
-              className="w-full pl-10 pr-11 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 outline-none focus:border-emerald-500 focus:bg-white transition-all"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors bg-transparent border-none cursor-pointer"
-            >
-              <EyeIcon show={showPassword} />
-            </button>
-          </div>
-        </div>
+    localStorage.setItem("user", JSON.stringify(newUser));
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-2 w-full py-3.5 text-white font-bold rounded-xl transition-all duration-200 border-none cursor-pointer hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 text-sm shadow-lg"
-          style={{ background: loading ? '#6b7280' : 'linear-gradient(135deg, #22c55e, #15803d)', boxShadow: '0 4px 15px rgba(34,197,94,0.3)' }}
-        >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              Memproses...
-            </span>
-          ) : (
-            'Daftar Sekarang'
-          )}
-        </button>
-      </form>
+    alert("Registrasi berhasil!");
 
-      {/* Register link */}
-      <p className="mt-5 text-center text-[13px] text-gray-400 font-medium">
-        Sudah punya akun?{' '}
-        <Link to="/login" className="text-emerald-600 font-bold hover:text-emerald-700 no-underline transition-colors">
-          Masuk di sini
-        </Link>
-      </p>
-    </div>
-  );
+    navigate("/shop");
+
+  } catch (err) {
+    console.error(err);
+    alert("Registrasi gagal");
+  } finally {
+    setLoading(false);
+  }
+};
 }
